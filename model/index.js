@@ -1,5 +1,5 @@
 function objectIsModel(object, model) {
-  let match = true;
+  let match = Object.keys(object).length==0 ? false:true;
   function checkArr(type, val) {
     return Array.isArray(val) && val.every(item => type.prototype.isPrototypeOf(Object(item)));
   }
@@ -30,7 +30,7 @@ function objectIsModel(object, model) {
         break;
       }
       if (typeof(val) != "boolean" && !val) {
-        if (required) {
+        if (!required) {
           continue;
         } else {
           match = false;
@@ -63,6 +63,7 @@ class Model{
     if(!objectIsModel(obj, this._modelObj)){
       return false;
     }
-    return this._alsoRequires.every(func=>func(object));
+    return this._alsoRequires.every(func=>func(obj));
   }
 }
+module.exports=Model;

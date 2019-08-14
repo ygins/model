@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/Yona168/model/issues"
   },
-  "homepage": "https://github.com/Yona168/model#readme"
+  "homepage": "https://github.com/Yona168/model#readme",
+  "devDependencies": {
+    "jest-html-reporter": "^2.5.0"
+  }
 }
