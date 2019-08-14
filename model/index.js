@@ -1,6 +1,5 @@
 function objectIsModel(object, model) {
   let match = true;
-
   function checkArr(type, val) {
     return Array.isArray(val) && val.every(item => type.prototype.isPrototypeOf(Object(item)));
   }
