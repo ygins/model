@@ -1,0 +1,22 @@
+{
+  "name": "model",
+  "version": "1.0.0",
+  "description": "Create simple models to validate objects against at runtime",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yona168/model.git"
+  },
+  "keywords": [
+    "model"
+  ],
+  "author": "Yona168",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Yona168/model/issues"
+  },
+  "homepage": "https://github.com/Yona168/model#readme"
+}
