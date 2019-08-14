@@ -1,4 +1,4 @@
-const Model = require("../model");
+const Model = require("../index");
 
 describe("Block syntax vs single-value syntax", () => {
   let valueModel = new Model({

@@ -1,6 +1,6 @@
 {
-  "name": "model",
-  "version": "1.0.0",
+  "name": "runtime-models",
+  "version": "1.0.1",
   "description": "Create simple models to validate objects against at runtime",
   "main": "index.js",
   "scripts": {
@@ -14,12 +14,14 @@
     "model"
   ],
   "author": "Yona168",
-  "license": "ISC",
+  "license": "SEE LICENSE IN LICENSE",
   "bugs": {
     "url": "https://github.com/Yona168/model/issues"
   },
   "homepage": "https://github.com/Yona168/model#readme",
   "devDependencies": {
+    "jest": "^24.8.0",
     "jest-html-reporter": "^2.5.0"
-  }
+  },
+  "dependencies": {}
 }

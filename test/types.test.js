@@ -1,4 +1,4 @@
-const Model=require("../model");
+const Model=require("../index");
 
 
 describe("Check for type equality in models", ()=>{

@@ -1,4 +1,4 @@
-const Model = require("../model");
+const Model = require("../index");
 
 describe("Models having other requirements", () => {
   describe("Requirement saying that obj.name must be equal to \"John\"", () => {

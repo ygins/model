@@ -1,2 +1,2 @@
 # model
-NPM package to create models at runtime with javascript
+NPM package to create models at runtime with JS.
