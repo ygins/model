@@ -20,9 +20,7 @@ NPM:
 Models are made by creating an object with key-value pairs. These pairs
 reflect the key required and the type that the key must be.
 
-_VITAL_ ->Your models CANNOT have a key called "type" unless it is top level.
-Otherwise, your model will assume you're simply declaring the type of the parent
-(read on!).
+_VITAL_ ->If you want to use "type" or "required" as keys in your model, see "The Underscore Option"
 
 ```javascript
 const Model=require("runtime-models");
@@ -153,6 +151,34 @@ Now, an object such as the following one passes our model check.
 
 ```javascript
 let myObj={num: 5};
+```
+
+### The underscore option
+Sometimes, you may want to use "type" or "required" as fields in your object.
+Normally this would be an issue, as those are keywords (as shown above). To get
+around this, the Model constructor takes an optional first boolean argument, which
+defaults to false. If true, "type" and "required" are both able to be used as fields.
+You simply use "\_type" and "\_required" instead. For example, all three of the
+following models function identically:
+```javascript
+const model=new Model({
+  name: {
+    type: String,
+    required: true
+  }
+});
+const model2=new Model(false, {
+  name: {
+    type: String,
+    required: true
+  }
+});
+const model3=new Model(true, {
+  name: {
+    _type: String,
+    _required: true
+  }//Now we can use type and required as fields
+});
 ```
 
 ### checkStrict

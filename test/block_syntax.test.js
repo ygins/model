@@ -72,3 +72,49 @@ describe("The required parameter", () => {
     });
   });
 });
+
+describe("The underscore option", () => {
+  describe.each(
+    [
+      [true, true, true],
+      [true, false, false],
+      [false, true, false],
+      [false, false, true]
+    ]
+  )(`underscore option=%p. actually underscored type=%p. Expected output when given {name: "Hey"}=%p`, (underscoreOption, actualUnderscore, output) => {
+    let typeField = actualUnderscore ? "_type" : "type";
+    let obj = {
+      name: {}
+    };
+    obj.name[typeField] = String;
+    console.log(obj);
+    let model = new Model(obj, underscoreOption);
+    test("Test _type with model.match", () => {
+      expect(model.check({
+        name: 'Hey'
+      })).toBe(output);
+    });
+  });
+
+  describe("Test _required", ()=>{
+    let model=new Model(true, {id: Number, name: {_type: String, _required: false}});
+    describe("Model takes underscores and required false", ()=>{
+      test("pass object without field for model", ()=>{
+          expect(model.check({id: 4})).toBe(true);
+      });
+      test("pass object with field for model", ()=>{
+        expect(model.check({id: 5, name: "Hey!"})).toBe(true);
+      });
+    });
+  });
+  test("If underscore option, can use test and required as fields", ()=>{
+    const model=new Model(true,{
+      name:{
+        _type: String,
+        _required: true
+      },
+      type: Number
+    });
+    expect(model.check({name: "Hey!", type:5})).toBe(true);
+  });
+});

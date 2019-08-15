@@ -3,17 +3,19 @@ const exists = (obj) => !doesntExist(obj);
 const isObjectOrArray = (obj) => exists(obj) && typeof(obj) === "object";
 const isReallyObject = (obj) => isObjectOrArray(obj) && !Array.isArray(obj);
 
-const objectIsModelRemake = (object, model) => {
+const objectIsModelRemake = (object, model, underscoreOptions) => {
+  const typeField=underscoreOptions ? "_type":"type";
+  const requiredField=underscoreOptions ? "_required":"required";
   for (let [modelKey, modelVal] of Object.entries(model)) {
     let objVal = object[modelKey];
     //Grab type of what objVal should be
     let type;
     let required = true;
     if (isReallyObject(modelVal)) {
-      if (exists(modelVal.type)) {
+      if (exists(modelVal[typeField])) {
         //The model is NOT declaring an inner object-this is a type declaration
-        type = modelVal.type;
-        required = exists(modelVal.required) ? modelVal.required : false;
+        type = modelVal[typeField];
+        required = exists(modelVal[requiredField]) ? modelVal[requiredField] : false;
       } else {
         //The object is a further declaration
         if (!isReallyObject(objVal) || !objectIsModelRemake(objVal, modelVal)) { //if the provided value isnt an object, fail.
@@ -60,9 +62,10 @@ const objectIsModelRemake = (object, model) => {
   return true;
 };
 class Model {
-  constructor(obj) {
+  constructor(obj, underscoreOptions=false) {
     this._modelObj = obj;
     this._alsoRequires = [];
+    this._underscoreOptions=underscoreOptions;
   }
 
   alsoRequire(func) {
@@ -70,20 +73,21 @@ class Model {
   }
 
   check(obj) {
-    if (!objectIsModelRemake(obj, this._modelObj)) {
+    if (!objectIsModelRemake(obj, this._modelObj, this._underscoreOptions)) {
       return false;
     }
     return this._alsoRequires.every(func => func(obj));
   }
   checkStrict(obj) {
+    const typeField=this._underscoreOptions ? "_type":"type";
     if (!objectIsModelRemake(obj, this._modelObj)) {
       return false;
     }
 
     function checkKeys(object, model) {
       for (let [key, val] of Object.entries(object)) {
-        let typeExists = exists(model.type);
-        let objType = typeExists ? model.type : model[key];
+        let typeExists = exists(model[typeField]);
+        let objType = typeExists ? model[typeField] : model[key];
         if (doesntExist(objType)) {
           return false;
         }
