@@ -1,69 +1,101 @@
-function objectIsModel(object, model) {
-  let match = Object.keys(object).length==0 ? false:true;
-  function checkArr(type, val) {
-    return Array.isArray(val) && val.every(item => type.prototype.isPrototypeOf(Object(item)));
-  }
-  for (let [key, val] of Object.entries(object)) {
-    if (model[key]) {
-      if (val && !Array.isArray(val) && typeof(val) == "object") {
-        match = objectIsModel(val, model[key]);
-        if (!match) break;
-        else continue;
-      } else if (val && Array.isArray(model[key]) && typeof(model[key][0]) === "object") {
-        match = val.every(item => objectIsModel(item, model[key][0]));
-        if (!match) break;
-        else continue;
-      }
-      let required = false;
-      let array = false;
-      let type;
-      if (!Array.isArray(model[key]) && typeof(model[key]) === "object") {
-        required = model[key].required || false;
-        array = Array.isArray(model[key].type);
-        type = array ? model[key].type[0] : model[key].type;
+const doesntExist = (obj) => obj === undefined || obj === null;
+const exists = (obj) => !doesntExist(obj);
+const isObjectOrArray = (obj) => exists(obj) && typeof(obj) === "object";
+const isReallyObject = (obj) => isObjectOrArray(obj) && !Array.isArray(obj);
+
+const objectIsModelRemake = (object, model) => {
+  for (let [modelKey, modelVal] of Object.entries(model)) {
+    let objVal = object[modelKey];
+    //Grab type of what objVal should be
+    let type;
+    let required = true;
+    if (isReallyObject(modelVal)) {
+      if (exists(modelVal.type)) {
+        //The model is NOT declaring an inner object-this is a type declaration
+        type = modelVal.type;
+        required = exists(modelVal.required) ? modelVal.required : false;
       } else {
-        array = Array.isArray(model[key]);
-        type = array ? model[key][0] : model[key];
-      }
-      if (!type) {
-        match = false;
-        break;
-      }
-      if (typeof(val) != "boolean" && !val) {
-        if (!required) {
-          continue;
+        //The object is a further declaration
+        if (!isReallyObject(objVal) || !objectIsModelRemake(objVal, modelVal)) { //if the provided value isnt an object, fail.
+
+          return false;
         } else {
-          match = false;
-          break;
+          continue;
         }
-      } else if (array) {
-        match = checkArr(type, val);
-      } else {
-        match = type.prototype.isPrototypeOf(Object(val));
       }
     } else {
-      match = false;
-      break;
+      type = modelVal;
+    }
+    //Maybe the object isnt required.
+    if (doesntExist(objVal)) {
+      if (required) {
+        return false;
+      } else {
+        continue;
+      }
+    }
+    //Now lets process types. Two options here: Array or primitive. We've handled plain objects
+    if (Array.isArray(type)) {
+      if (!Array.isArray(objVal)) {
+        return false;
+      }
+      //We either have an object array or primitive array. This function depends
+      //on that.
+      let checkerFunc;
+      if (isObjectOrArray(type[0])) { //object array
+        checkerFunc = (val, myType) => val.every(item => objectIsModelRemake(item, myType));
+      } else { //Primitive array
+        checkerFunc = (val, myType) => val.every(item => myType.prototype.isPrototypeOf(Object(item)));
+      }
+      if (!checkerFunc(objVal, type[0])) {
+        return false; //Array didn't pass
+      }
+    } else {
+      //Primitive value
+      if (!type.prototype.isPrototypeOf(Object(objVal))) {
+        return false;
+      }
     }
   }
-  return match;
-}
-
-class Model{
-  constructor(obj){
-    this._modelObj=obj;
-    this._alsoRequires=[];
+  return true;
+};
+class Model {
+  constructor(obj) {
+    this._modelObj = obj;
+    this._alsoRequires = [];
   }
 
-  alsoRequire(func){
+  alsoRequire(func) {
     this._alsoRequires.push(func);
   }
 
-  check(obj){
-    if(!objectIsModel(obj, this._modelObj)){
+  check(obj) {
+    if (!objectIsModelRemake(obj, this._modelObj)) {
       return false;
     }
-    return this._alsoRequires.every(func=>func(obj));
+    return this._alsoRequires.every(func => func(obj));
+  }
+  checkStrict(obj) {
+    if (!this.check(obj)) {
+      return false;
+    }
+
+    function checkKeys(object, model) {
+      for (let [key, val] of Object.entries(object)) {
+        let typeExists = exists(model.type);
+        let objType = typeExists ? model.type : model[key];
+        if (doesntExist(objType)) {
+          return false;
+        }
+        if (isObjectOrArray(val) && !typeExists) {
+          if (!checkKeys(val, objType)) {
+            return false;
+          } else continue;
+        }
+      }
+      return true;
+    }
+    return checkKeys(obj, this._modelObj);
   }
 }
-module.exports=Model;
+module.exports = Model;

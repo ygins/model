@@ -23,5 +23,7 @@
     "jest": "^24.8.0",
     "jest-html-reporter": "^2.5.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "deep-keys": "^0.5.0"
+  }
 }
