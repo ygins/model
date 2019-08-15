@@ -76,7 +76,7 @@ class Model {
     return this._alsoRequires.every(func => func(obj));
   }
   checkStrict(obj) {
-    if (!this.check(obj)) {
+    if (!objectIsModelRemake(obj, this._modelObj)) {
       return false;
     }
 
@@ -95,7 +95,8 @@ class Model {
       }
       return true;
     }
-    return checkKeys(obj, this._modelObj);
+    let strict = checkKeys(obj, this._modelObj);
+    return strict && this._alsoRequires.every(func => func(obj));
   }
 }
 module.exports = Model;
