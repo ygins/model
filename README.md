@@ -156,7 +156,7 @@ let myObj={num: 5};
 ### The underscore option
 Sometimes, you may want to use "type" or "required" as fields in your object.
 Normally this would be an issue, as those are keywords (as shown above). To get
-around this, the Model constructor takes an optional first boolean argument, which
+around this, the Model constructor takes an optional second boolean argument, which
 defaults to false. If true, "type" and "required" are both able to be used as fields.
 You simply use "\_type" and "\_required" instead. For example, all three of the
 following models function identically:
@@ -167,18 +167,18 @@ const model=new Model({
     required: true
   }
 });
-const model2=new Model(false, {
+const model2=new Model({
   name: {
     type: String,
     required: true
   }
-});
-const model3=new Model(true, {
+}, false);
+const model3=new Model({
   name: {
     _type: String,
     _required: true
   }//Now we can use type and required as fields
-});
+}, true);
 ```
 
 ### checkStrict
