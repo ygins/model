@@ -1,4 +1,5 @@
 # runtime-models
+
 runtime-models is a NPM package, inspired by mongoose schemas,
 to create models at runtime with JS.
 
@@ -8,16 +9,18 @@ This can be useful when you are validating an objects structure that wasn't made
 from a specific class, such as accepting POST requests.
 
 ## Installation
+
 NPM:
 `npm install runtime-models`
 
 ## Usage
 
 ### Creating a model
+
 Models are made by creating an object with key-value pairs. These pairs
 reflect the key required and the type that the key must be.
 
-*VITAL* ->Your models CANNOT have a key called "type" unless it is top level.
+_VITAL_ ->Your models CANNOT have a key called "type" unless it is top level.
 Otherwise, your model will assume you're simply declaring the type of the parent
 (read on!).
 
@@ -29,7 +32,9 @@ let bookModel=new Model({
   year: Number
 })
 ```
+
 Models can have multiple layers of depth, just like any javascript object
+
 ```javascript
 const Model=require("runtime-models");
 let bookModel=new Model({
@@ -41,7 +46,9 @@ let bookModel=new Model({
   }
 });
 ```
+
 To declare array types, you simply put the type ALONE inside an array:
+
 ```javascript
 const Model=require("runtime-models");
 let bookModel=new Model({
@@ -56,7 +63,9 @@ let bookModel=new Model({
   }
 });
 ```
+
 You can also use the objects of models as types, for example:
+
 ```javascript
 const Model=require("runtime-models");
 const pageObj={
@@ -81,7 +90,9 @@ let bookModel=new Model({
 ```
 
 ### Checking an object against a model
+
 Checking objects is extremely simple-take the following code:
+
 ```javascript
 const Model=require("runtime-models");
 let myModel=new Model({
@@ -115,15 +126,19 @@ myModel.check(objThree) //returns false
 ```
 
 ### The required option
+
 You can make a field in the model optional. To do so is simple.
 Say we had this model
+
 ```javascript
 let model=new Model({
   num: Number,
   str: String
 });
 ```
+
 So, let's leave "num" as required, but make "str" optional.
+
 ```javascript
 let model=new Model({
   num: Number,
@@ -133,12 +148,15 @@ let model=new Model({
   }
 })
 ```
+
 Now, an object such as the following one passes our model check.
+
 ```javascript
 let myObj={num: 5};
 ```
 
 ### checkStrict
+
 In addition to check, models also have the `checkStrict` function. The only
 difference between `check` and `checkStrict` is that `checkStrict` will fail if the
 provided object has fields that are not in the model. For example:
@@ -154,23 +172,27 @@ let obj={
   str: "Hey",
   imposter: "oooo"
 };
-
 ```
+
 `check` would work here, as obj has all the fields of model. `checkStrict`
-would fail it as it as the extra "imposter" field.
+would fail it as it has the extra "imposter" field.
 
 ### Additional checks
+
 In some cases, type checks wont be enough. To add more checks is simple.
 Let's say we had this model:
+
 ```javascript
 let model=new Model({
   id: String,
   num: 5
 });
 ```
+
 Let's say we want id to not only be a String, but a SPECIFIC String. To add that
 is simple. the `model.alsoRequire` function takes a function that, when passed
 the object being checked, returns true or false based on some criteria. For example:
+
 ```javascript
 let model=new Model({
   id: String,
@@ -189,7 +211,9 @@ let objTwo={
 model.check(objOne) //true
 model.check(objTwo)// false
 ```
+
 ### Workflow
+
 When checking an object, there are three possible stages of checking:
 1. Check if object has keys (`check`)
 2. Check if object has extra keys (`checkStrict`)
