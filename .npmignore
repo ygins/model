@@ -3,3 +3,5 @@ node_modules/
 test-report.html
 README.md
 .jshintrc
+test/
+jest.config.js
