@@ -15,7 +15,12 @@ NPM:
 
 ### Creating a model
 Models are made by creating an object with key-value pairs. These pairs
-reflect the key required and the type that the key must be
+reflect the key required and the type that the key must be.
+
+*VITAL* ->Your models CANNOT have a key called "type" unless it is top level.
+Otherwise, your model will assume you're simply declaring the type of the parent
+(read on!).
+
 ```javascript
 const Model=require("runtime-models");
 let bookModel=new Model({
@@ -133,6 +138,27 @@ Now, an object such as the following one passes our model check.
 let myObj={num: 5};
 ```
 
+### checkStrict
+In addition to check, models also have the `checkStrict` function. The only
+difference between `check` and `checkStrict` is that `checkStrict` will fail if the
+provided object has fields that are not in the model. For example:
+
+```javascript
+let model=new Model({
+  num: Number,
+  str: String
+});
+
+let obj={
+  num:5,
+  str: "Hey",
+  imposter: "oooo"
+};
+
+```
+`check` would work here, as obj has all the fields of model. `checkStrict`
+would fail it as it as the extra "imposter" field.
+
 ### Additional checks
 In some cases, type checks wont be enough. To add more checks is simple.
 Let's say we had this model:
@@ -163,5 +189,13 @@ let objTwo={
 model.check(objOne) //true
 model.check(objTwo)// false
 ```
+### Workflow
+When checking an object, there are three possible stages of checking:
+1. Check if object has keys (`check`)
+2. Check if object has extra keys (`checkStrict`)
+3. Check additional requirements for the object (made with `alsoRequire`)
 
+Obviously, if you use `check` without any additional requirements, then only one
+stage will trigger-the first. However, if all these exist in your project, the
+order that these stages are listed in is the order that they will be triggered in.
 And that's it! Enjoy!
