@@ -2,7 +2,6 @@ const doesntExist = (obj) => obj === undefined || obj === null;
 const exists = (obj) => !doesntExist(obj);
 const isObjectOrArray = (obj) => exists(obj) && typeof(obj) === "object";
 const isReallyObject = (obj) => isObjectOrArray(obj) && !Array.isArray(obj);
-const test=5;
 const objectIsModelRemake = (object, model, underscoreOptions) => {
   const typeField=underscoreOptions ? "_type":"type";
   const requiredField=underscoreOptions ? "_required":"required";
